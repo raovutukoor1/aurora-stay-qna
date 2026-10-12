@@ -53,7 +53,7 @@ The backend starts on `http://localhost:5000` by default. Set `OPENAI_API_KEY` a
 
 ### Frontend
 
-The Streamlit frontend expects the backend at `http://localhost:7860` in `frontend/app.py`. Either change `BACKEND_URL` to `http://localhost:5000`, or start the backend on port 7860.
+The Streamlit frontend uses `http://localhost:5000` by default. Override this with the `BACKEND_URL` environment variable if the backend runs elsewhere.
 
 ```bash
 cd frontend
