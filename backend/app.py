@@ -3,6 +3,7 @@
 # Import necessary libraries
 from flask import Flask, request, jsonify
 import os
+import truststore
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 
@@ -28,6 +29,10 @@ rag_api = Flask("Aurora Stay API")
 # ---------------------------------------------------------
 # Load the embedding model
 # ---------------------------------------------------------
+
+# Use the Windows certificate store for Hugging Face downloads in managed or
+# corporate environments.
+truststore.inject_into_ssl()
 
 try:
     embeddings = HuggingFaceEmbeddings(
