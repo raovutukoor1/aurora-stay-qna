@@ -78,4 +78,5 @@ def rag(
         return answer.content, retrieved_chunks
     except Exception as exc:
         # Keep local endpoint smoke tests available when the model service is offline.
+        print(f"RAG generation failed: {type(exc).__name__}: {exc}", flush=True)
         return f"Local smoke-test fallback: model service unavailable ({type(exc).__name__}).", retrieved_chunks
