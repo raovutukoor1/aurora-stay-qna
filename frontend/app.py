@@ -2,13 +2,14 @@
 
 import streamlit as st
 import requests
+import os
 
 
 # ---------------------------------------------------------
 # Configuration
 # ---------------------------------------------------------
 
-BACKEND_URL = "http://localhost:7860"
+BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:5000")
 
 
 # ---------------------------------------------------------
