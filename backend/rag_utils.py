@@ -54,21 +54,22 @@ def rag(
     max_tokens: int = 512,
     vectorstore=None
 ):
-    # Create the generator model
-    model = ChatOpenAI(
-        model=model_name,
-        temperature=temperature,
-        top_p=top_p,
-        max_tokens=max_tokens,
-        openai_api_key=os.getenv('OPENAI_API_KEY'),
-        base_url=os.getenv('OPENAI_BASE_URL')
-    )
-
     # Retrieve relevant chunks
     retrieved_chunks = retrieve(query=query, k=k,vectorstore=vectorstore)
 
-    # Generate answer using retrieved chunks
     try:
+        # Create the generator model inside the guarded block. This allows the
+        # local UI to return a useful fallback when API configuration is absent.
+        model = ChatOpenAI(
+            model=model_name,
+            temperature=temperature,
+            top_p=top_p,
+            max_tokens=max_tokens,
+            openai_api_key=os.getenv('OPENAI_API_KEY'),
+            base_url=os.getenv('OPENAI_BASE_URL')
+        )
+
+        # Generate answer using retrieved chunks.
         answer = generate(
             query=query,
             retrieved_chunks=retrieved_chunks,
