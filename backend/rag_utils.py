@@ -4,7 +4,7 @@ from langchain_openai import ChatOpenAI
 import os
 
 # Retrieve the top-k relevant chunks from the vector store
-def retrieve(query: str, k: int = 2,vectorstore=None) -> list[str]:
+def retrieve(query: str, k: int = 5,vectorstore=None) -> list[str]:
     results = vectorstore.similarity_search(query, k=k)
 
     # Return each chunk with its content and metadata
@@ -47,7 +47,7 @@ def generate(query, retrieved_chunks,model) -> str:
 # Define the full RAG pipeline combining retrieval and generation
 def rag(
     query: str,
-    k: int = 2,
+    k: int = 5,
     model_name: str = "gpt-4o-mini",
     temperature: float = 0.0,
     top_p: float = 1.0,
