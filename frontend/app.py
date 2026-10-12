@@ -18,7 +18,7 @@ BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:5000")
 
 st.set_page_config(
     page_title="Aurora Stays",
-    page_icon="ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸Ãƒâ€šÃ‚ÂÃƒâ€šÃ‚Â¨",
+    page_icon="🏨",
     layout="wide"
 )
 
@@ -29,7 +29,7 @@ st.set_page_config(
 
 with st.sidebar:
 
-    st.header("ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã‚Â¡ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¸Ãƒâ€šÃ‚Â Parameters")
+    st.header("⚙️ Parameters")
 
     k = st.slider(
         "k (chunks to retrieve)",
@@ -62,7 +62,7 @@ with st.sidebar:
 # Main area
 # ---------------------------------------------------------
 
-st.title("ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸Ãƒâ€šÃ‚ÂÃƒâ€šÃ‚Â¨ Aurora Stays")
+st.title("🏨 Aurora Stays")
 st.write("Ask a question about Aurora Stays policies.")
 
 
@@ -113,7 +113,7 @@ if st.button("Submit", type="primary"):
         }
 
         try:
-            with st.spinner("ThinkingÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦"):
+            with st.spinner("Thinking…"):
                 response = requests.post(
                     f"{BACKEND_URL}{endpoint}",
                     json=payload
