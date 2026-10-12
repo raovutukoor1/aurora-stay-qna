@@ -33,7 +33,7 @@ Example request:
 ```json
 {
   "query": "What is the cancellation policy for a flexible reservation?",
-  "k": 3,
+  "k": 5,
   "temperature": 0.0,
   "max_tokens": 512
 }
@@ -68,5 +68,7 @@ Each service includes its own `Dockerfile`. Build and run the backend and fronte
 ## Notes
 
 - The FAISS index is included under `backend/faiss_index`.
+- Baseline retrieval setting: `k=5` chunks per query, selected from the dev/test retrieval comparison.
+- Saved evaluation baseline: 60% dev pass rate and 30% held-out test pass rate with `k=5`.
 - Do not commit API keys or GitHub tokens. Use environment variables or a local secrets file.
 - The default embedding model can be overridden with the `EMBED_MODEL` environment variable.
