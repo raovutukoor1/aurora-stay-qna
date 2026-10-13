@@ -112,11 +112,15 @@ for raw in raw_docs:
         if line.startswith("#"):
             heading = line.lstrip("# ").strip()
         if line.strip().startswith("|") and re.search(r"ASH-[A-Z]{3}", line.upper()):
-            atomic_rows.append(LCDocument(page_content=f"## {heading}\\n{line}", metadata={"source": raw.metadata["source"]}))
-if os.getenv("ATOMIC_PROPERTY_ROWS", "false").lower() == "true":
+            property_code = re.search(r"ASH-[A-Z]{3}", line.upper()).group(0)
+            atomic_rows.append(LCDocument(
+                page_content=f"## {heading}\\nProperty: {property_code}\\n{line}",
+                metadata={"source": raw.metadata["source"], "property_codes": [property_code], "topics": ["room_and_property"]},
+            ))
+if os.getenv("ATOMIC_PROPERTY_ROWS", "true").lower() == "true":
     base_chunks.extend(atomic_rows)
 lc_docs = [annotate_chunk(chunk) for chunk in base_chunks]
-print(f"Total chunks: {len(lc_docs)} (atomic rows enabled={os.getenv('ATOMIC_PROPERTY_ROWS', 'false')})")
+print(f"Total chunks: {len(lc_docs)} (atomic rows enabled={os.getenv('ATOMIC_PROPERTY_ROWS', 'true')})")
 ''',
         20: '''# Code cell 020
 # Load local API configuration, with the supplied assignment config as a fallback.

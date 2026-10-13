@@ -10,6 +10,7 @@ from langchain_core.documents import Document
 
 
 DEFAULT_RERANKER_MODEL = "cross-encoder/ms-marco-MiniLM-L-6-v2"
+KNOWN_PROPERTY_CODES = {"ASH-ATL", "ASH-BOS", "ASH-CHI", "ASH-DEN", "ASH-MIA", "ASH-SEA"}
 
 
 @lru_cache(maxsize=4)
@@ -57,6 +58,12 @@ def _property_codes(query: str):
     codes = {match.upper() for match in __import__("re").findall(r"ASH-[A-Z]{3}", query.upper())}
     codes.update(code for alias, code in aliases.items() if alias in query)
     return codes
+
+
+def _unsupported_property_query(query: str) -> bool:
+    """Prevent generic policy chunks from answering unsupported property questions."""
+    lower = query.lower()
+    return "austin north" in lower or ("cabana" in lower and not _property_codes(query))
 
 
 def _topic_matches(query: str, doc) -> bool:
@@ -183,6 +190,17 @@ def _exact_match_boost(query: str, doc) -> float:
     return boost
 
 
+def _property_specificity_boost(query: str, doc) -> float:
+    """Prefer an atomic row for the requested property over a multi-property matrix."""
+    codes = _property_codes(query)
+    if not codes:
+        return 0.0
+    metadata_codes = {str(value).upper() for value in doc.metadata.get("property_codes", [])}
+    if metadata_codes.intersection(codes):
+        return 2.0 if len(metadata_codes) == 1 else -0.25
+    return -1.0
+
+
 def retrieve_documents(
     query: str,
     k: int = 5,
@@ -193,6 +211,8 @@ def retrieve_documents(
     metadata_boost: float | None = None,
 ):
     """MMR candidate retrieval followed by relevance reranking."""
+    if _unsupported_property_query(query):
+        return []
     if os.getenv("ADAPTIVE_K", "false").lower() == "true":
         k = _adaptive_k(query, k)
     lambda_mult = float(os.getenv("MMR_LAMBDA", "0.5")) if lambda_mult is None else lambda_mult
@@ -248,6 +268,7 @@ def retrieve_documents(
         key=lambda item: item[0]
         + metadata_boost * _source_boost(query, item[1].metadata.get("source", ""))
         + (0.35 if _property_matches(query, item[1]) and _property_codes(query) else 0.0)
+        + _property_specificity_boost(query, item[1])
         + (_exact_match_boost(query, item[1]) if os.getenv("EXACT_MATCH_BOOST", "false").lower() == "true" else 0.0),
         reverse=True,
     )
