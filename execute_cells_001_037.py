@@ -88,6 +88,7 @@ with client.setup_kernel():
         notebook.cells[original_index] = copy.deepcopy(executed)
         notebook.metadata["last_execution_group"] = f"Sequential execution through code cell {number:03d}"
         nbformat.write(notebook, NOTEBOOK_PATH.open("w", encoding="utf-8"))
-        print(f"Completed code cell {number:03d}: {summary}", flush=True)
+        safe_summary = summary.encode("ascii", "replace").decode("ascii")
+        print(f"Completed code cell {number:03d}: {safe_summary}", flush=True)
 
 print("Completed sequential execution through code cell 037.")
