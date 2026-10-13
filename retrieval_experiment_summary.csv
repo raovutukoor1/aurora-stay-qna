@@ -1,0 +1,6 @@
+name,chunk_size,chunk_overlap,lambda_mult,fetch_k,metadata_boost,k,rerank_threshold,deduplicate,run_id,chunks,mean_coverage_proxy,coverage_at_75
+validated_baseline,512,64,0.5,20,0.25,5,,False,run_01,37,0.8361,9
+fetch30_lambda055,512,64,0.55,30,0.25,5,,True,run_03,37,0.8214,8
+fetch40_lambda050,512,64,0.5,40,0.25,5,,True,run_02,37,0.817,8
+fetch40_lambda060,512,64,0.6,40,0.25,5,,True,run_04,37,0.8155,7
+fetch40_lambda060_threshold010,512,64,0.6,40,0.25,5,0.1,True,run_05,37,0.3147,3

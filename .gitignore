@@ -1,0 +1,20 @@
+# Local credentials
+config/config.json
+.env
+Supplied files/Access Token Git Hub.txt
+Supplied files/confignew*.txt
+
+# Generated/runtime artifacts
+backend/faiss_index/
+artifacts/
+.deepeval/
+.hf-cache/
+.uv-cache/
+data/archive/
+__pycache__/
+.ipynb_checkpoints/
+
+# Local notebook outputs
+*.log
+.DS_Store
+Thumbs.db
