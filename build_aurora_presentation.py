@@ -298,6 +298,7 @@ def add_body(slide, lines, font_size=17, mono=False, body_top=1.45, add_header_l
             and (text.endswith(":") or text in {
                 "Problem", "Solution approach", "Relevant evidence", "Example focused chunk",
                 "Held-out DeepEval comparison (10 cases)",
+                "Production checklist", "Known limitation",
             })
         )
         content.append((text, is_bullet or is_indented, heading))
@@ -340,14 +341,19 @@ def add_body(slide, lines, font_size=17, mono=False, body_top=1.45, add_header_l
 
 def set_title(slide, title):
     title_shape = find_title_shape(slide)
-    set_shape_text(title_shape, title, font_name="Montserrat", font_size=24, bold=True, color=TEMPLATE_BLUE)
+    title_size = 24
+    if len(title) > 55:
+        title_size = 20
+    elif len(title) > 43:
+        title_size = 22
+    set_shape_text(title_shape, title, font_name="Montserrat", font_size=title_size, bold=True, color=TEMPLATE_BLUE)
 
 
 prs = Presentation(str(TEMPLATE))
 
-# Keep only the populated non-deployment section. The template's final slide
-# is an unused placeholder, so it is removed along with slides 20-31.
-while len(prs.slides) > 19:
+# Populate the complete template through the appendix. The final template
+# slide is an unused placeholder and is removed.
+while len(prs.slides) > 31:
     slide_id = prs.slides._sldIdLst[-1]
     rel_id = slide_id.rId
     prs.part.drop_rel(rel_id)
@@ -383,7 +389,7 @@ agenda = [
     "Data Understanding",
     "Retrieval-Augmented Generation System",
     "Evaluation",
-    "Recommendations and Next Steps",
+    "Deployment, Inference and Handoff",
 ]
 for shape, text in zip(agenda_text_shapes[1:], agenda):
     set_shape_text(shape, text, font_name="Montserrat", font_size=14, color=TEMPLATE_BLACK)
@@ -520,11 +526,110 @@ slides = {
         "Only remaining failure: Accessible King room inclusions; Contextual Precision=.451.",
         "The benchmark question is underspecified. A focused clarification plus single-chunk retrieval scored Precision=.961 and passed all four metrics.",
     ], 14),
+    20: ("Deployment - Backend - Serialize the Vector Database", [
+        "Backend artifact: backend/faiss_index/index.faiss.",
+        "Metadata and document store: backend/faiss_index/index.pkl.",
+        "The persisted FAISS index contains 43 normalized vectors from the policy knowledge base.",
+        "The backend loads the trusted local artifact at startup; the Docker image copies the index into /app/faiss_index.",
+        "The artifact must be rebuilt whenever source documents, chunking, or embeddings change.",
+    ], 15),
+    21: ("Deployment - Backend - Define the Flask Application", [
+        "Service entry point: backend/app.py; production command uses Gunicorn and app:rag_api.",
+        "GET / returns a lightweight readiness message.",
+        "POST /v1/relevant_chunks returns the top-k retrieved policy chunks.",
+        "POST /v1/answer_with_relevant_chunks returns the generated answer and evidence chunks.",
+        "POST /v1/answer returns the generated answer only.",
+        "Defaults: k=5, gpt-4o-mini, temperature=0.0, top_p=1.0, max_tokens=512.",
+        "Container binding: 0.0.0.0:7860; local smoke tests use port 5000.",
+    ], 13.5),
+    22: ("Deployment - Backend - Define the Dependencies", [
+        "Pinned backend dependencies are declared in backend/requirements.txt.",
+        "Flask 3.1.3 and Gunicorn 26.2.0 provide the API service runtime.",
+        "LangChain HuggingFace, LangChain Community, and LangChain OpenAI provide retrieval and generation integration.",
+        "sentence-transformers 6.1.0 and faiss-cpu 1.15.0 provide embeddings and vector search.",
+        "The Docker build installs CPU-only PyTorch before installing the requirements file.",
+        "The embedding model is cached during image build so runtime can use offline mode.",
+    ], 13.5),
+    23: ("Deployment - Backend - Define the Dockerfile", [
+        "Base image: python:3.13.15-slim.",
+        "Copies the backend application, FAISS artifact, and requirements into /app.",
+        "Installs CPU PyTorch and the pinned backend dependencies without pip cache.",
+        "Downloads HarishMaths/Hotel-Policy-Embedding at build time and sets HF_HOME=/app/huggingface.",
+        "TRANSFORMERS_OFFLINE=1 and HF_HUB_OFFLINE=1 prevent runtime model downloads.",
+        "Starts one Gunicorn worker on port 7860 with a 120-second request timeout.",
+    ], 13.5),
+    24: ("Deployment - Frontend - Define the Streamlit App", [
+        "Frontend entry point: frontend/app.py; it provides the Aurora Stays question-and-answer interface.",
+        "Sidebar controls: k from 1 to 10, temperature from 0.0 to 1.0, and max_tokens from 64 to 2048.",
+        "Users can select Answer only or Answer + Relevant Chunks.",
+        "The backend address is supplied through BACKEND_URL; local default is http://localhost:5000.",
+        "The interface displays the answer, retrieved evidence, and a clear API connectivity error when the backend is unavailable.",
+        "Validated locally with Streamlit on port 8501 and the Flask API on port 5000.",
+    ], 13.5),
+    25: ("Deployment - Frontend - Define the Dockerfile", [
+        "Base image: python:3.13.15-slim.",
+        "Copies the Streamlit application and installs requests 2.34.2 and streamlit 1.64.0.",
+        "Binds Streamlit to 0.0.0.0:8501 for Codespaces or container access.",
+        "XSRF protection is disabled in the supplied deployment command to simplify external access.",
+        "Set BACKEND_URL at runtime so the frontend can call the backend service or forwarded port.",
+    ], 14),
+    26: ("Deployment - Frontend - Push the Files to GitHub", [
+        "Repository: github.com/raovutukoor1/aurora-stay-qna.",
+        "Latest published commit: 7fda05a — Publish latest Aurora Stays evaluation and presentation.",
+        "Published groups include backend and frontend source, FAISS artifacts, the final executed notebook, evaluation CSVs, and the presentation pack.",
+        "The supplied template and generated PPTX/PDF presentation files are included for handoff.",
+        "Credentials remain excluded: config/config.json, .env, and supplied token/config files are not tracked.",
+    ], 13.5),
+    27: ("Deployment - Inference - Define the Forwarded URL", [
+        "In GitHub Codespaces, open the Ports panel and forward the Streamlit port 8501.",
+        "The public URL is generated per Codespace session; it is not hard-coded in the repository.",
+        "Set BACKEND_URL to the backend service URL or its forwarded port before starting Streamlit.",
+        "Production smoke tests used the parking-fee query and the ASH-CHI Loop pet-charge query.",
+        "API keys belong in Codespaces Secrets or a private local config file, never in the forwarded URL or source code.",
+    ], 14),
+    28: ("Deployment - Inference - Relevant Chunks", [
+        "Endpoint: POST {BACKEND_URL}/v1/relevant_chunks.",
+        'Payload: {"query": "What are the parking fees at the Atlanta and Miami hotels?", "k": 5}.',
+        "Response fields: query, k, and relevant_chunks.",
+        "Expected evidence includes ASH-ATL Midtown self parking at $28 per night and ASH-MIA Brickell valet at $55 per night.",
+        "This endpoint is useful for checking retrieval quality before evaluating the generated answer.",
+    ], 14),
+    29: ("Deployment - Inference - Answer with Relevant Chunks", [
+        "Endpoint: POST {BACKEND_URL}/v1/answer_with_relevant_chunks.",
+        'Payload includes query, k=5, temperature=0.0, and max_tokens=512.',
+        "Response fields include answer, relevant_chunks, model_name, and the generation parameters used.",
+        "The parking example returns a grounded comparison of the Atlanta and Miami fees with supporting chunks.",
+        "Use POST /v1/answer when only the final answer is required; use this endpoint for auditability.",
+    ], 14),
+    30: ("APPENDIX", [
+        "Production checklist",
+        "â€¢ Create config/config.json locally or set Codespaces Secrets for OPENAI_API_KEY and OPENAI_BASE_URL.",
+        "â€¢ Start the backend first, confirm the readiness response, then start Streamlit on port 8501.",
+        "â€¢ Run a property-specific query and an evidence-display query before wider use.",
+        "Known limitation",
+        "â€¢ The Accessible King case has Contextual Precision=.451 because the benchmark question is underspecified for the auto-answer strategy.",
+        "â€¢ The focused clarification experiment reached Precision=.961; the benchmark question and retrieval baseline remain unchanged.",
+    ], 13.5),
+    31: ("Production Readiness and Handoff Notes", [
+        "Selected baseline: k=5 with chunk_size=512, overlap=64, MMR lambda=0.50, fetch_k=20, and CrossEncoder reranking.",
+        "Held-out result: 9/10 cases passed; weighted composite score 0.941.",
+        "The application is runnable through the Flask backend and Streamlit frontend, locally or in GitHub Codespaces.",
+        "Keep the benchmark question unchanged for evaluation; treat the remaining precision issue as a question/auto-answer limitation.",
+        "Next operational step: add monitoring for insufficient context and review the single known failure before broader rollout.",
+        "Handoff owner: raovutukoor1/aurora-stay-qna.",
+    ], 14),
 }
 
 for slide_number, (title, lines, size, *mono) in slides.items():
     slide = prs.slides[slide_number - 1]
     add_header_band(slide)
+    # The template's APPENDIX title is intentionally positioned low on the
+    # slide; move it into the common title position before body cleanup so it
+    # is preserved as the title shape without crowding the appendix content.
+    if slide_number == 30:
+        set_title(slide, title)
+        appendix_title = find_title_shape(slide)
+        appendix_title.top = Inches(0.32)
     add_body(
         slide,
         lines,
@@ -533,7 +638,8 @@ for slide_number, (title, lines, size, *mono) in slides.items():
         body_top=1.58 if slide_number in {15, 18} else 1.45,
         add_header_line=True,
     )
-    set_title(slide, title)
+    if slide_number != 30:
+        set_title(slide, title)
 
 prs.save(str(OUTPUT))
 print(f"Saved {OUTPUT}")
