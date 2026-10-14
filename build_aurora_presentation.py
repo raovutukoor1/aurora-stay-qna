@@ -373,7 +373,7 @@ title_text_shapes[1].left = Inches(1.78)
 title_text_shapes[1].width = Inches(7.6)
 set_shape_text(title_text_shapes[2], "14 October 2026", font_name="Nunito", font_size=22, color=TEMPLATE_BLUE)
 title_text_shapes[2].left = Inches(1.78)
-title_text_shapes[2].width = Inches(2.4)
+title_text_shapes[2].width = Inches(4.2)
 
 # Agenda without the excluded deployment section.
 agenda_slide = prs.slides[1]
