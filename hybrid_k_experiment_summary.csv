@@ -1,0 +1,13 @@
+config,dataset,mean_coverage_proxy,mean_doc_overlap,mean_context_chars,coverage_at_75
+hybrid_k4_noexact,dev,0.6452,0.4293,5124.8,5/10
+hybrid_k4_noexact,heldout,0.7861,0.492,4652.1,6/10
+hybrid_k4_exact,dev,0.6452,0.4293,5124.8,5/10
+hybrid_k4_exact,heldout,0.7861,0.4978,4778.4,6/10
+hybrid_k5_noexact,dev,0.6668,0.4059,6378.5,5/10
+hybrid_k5_noexact,heldout,0.8119,0.4758,5881.7,7/10
+hybrid_k5_exact,dev,0.6668,0.4059,6378.5,5/10
+hybrid_k5_exact,heldout,0.8119,0.4758,5881.7,7/10
+hybrid_k6_noexact,dev,0.7603,0.3912,7256.7,7/10
+hybrid_k6_noexact,heldout,0.8349,0.4562,7156.6,8/10
+hybrid_k6_exact,dev,0.7603,0.3912,7256.7,7/10
+hybrid_k6_exact,heldout,0.8452,0.4649,7339.2,8/10

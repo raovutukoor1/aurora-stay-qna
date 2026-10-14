@@ -1,0 +1,31 @@
+option,case,question,faithfulness,contextual recall,contextual precision,answer relevancy,composite,passed_all_metrics
+baseline_k5,1,I booked through an online travel agency. Who handles my cancellation and refund?,0.991367652341373,0.9460547442058773,0.825906021548381,0.9771843492590853,0.9441104385324431,True
+baseline_k5,2,Does a member discount automatically mean I can cancel for free?,1.0,0.9953275041705767,0.8138672524372348,0.9712232178130737,0.9558499700927058,True
+baseline_k5,3,How many people can stay in a Double Queen room?,1.0,0.9935346508940404,0.9581303090644313,0.990329420995806,0.9880756918106478,True
+baseline_k5,4,What exactly is included in an Accessible King room?,0.9885631470799561,0.913424818729138,0.45094147099874354,0.8006264654060657,0.824666893441231,False
+baseline_k5,5,"I am driving to Atlanta, and my friend is driving to Miami. What are the parking fees at those two hotels?",1.0,1.0,0.8926475170922565,0.9824461932846258,0.9750187420753764,True
+baseline_k5,6,Is breakfast free at the Miami Brickell property?,1.0,0.994334757150658,0.8278280834528781,0.9937210788772294,0.9628935217536859,True
+baseline_k5,7,Can I move my Advance Purchase reservation to next month?,0.9562176500885797,0.9615087848460224,0.8086884051203226,0.8955707613615284,0.9159052070388787,True
+baseline_k5,8,I need to leave at 2 PM from Denver. What happens if the hotel approves late checkout?,0.9979035756926283,0.9855851152482327,0.8340905961421221,0.8836956942311192,0.9392197883791262,True
+baseline_k5,9,My dog is not a service animal. What is the pet charge at ASH-CHI Loop?,1.0,0.9855851145128904,0.8875378788426085,1.0,0.9739038543967444,True
+baseline_k5,10,The pending hold on my card is larger than the final bill. When will I get the difference back?,0.9988130881629742,0.9981166870040727,0.7808492928685182,0.8950681570461791,0.9342972425909988,True
+hybrid_k5,1,I booked through an online travel agency. Who handles my cancellation and refund?,0.9940789754654105,0.9490526038500076,0.8224470828803965,0.9787931203112651,0.9454388330137278,True
+hybrid_k5,2,Does a member discount automatically mean I can cancel for free?,1.0,0.9978384666961613,0.855543426016518,0.9798186775339273,0.9665320373841293,True
+hybrid_k5,3,How many people can stay in a Double Queen room?,1.0,0.9937210787018527,0.7109921851221715,0.9916109617025007,0.9389508990403976,False
+hybrid_k5,4,What exactly is included in an Accessible King room?,0.9798186784940667,0.9281776122762379,0.4483917228114819,0.7361262906853066,0.8118845432413405,False
+hybrid_k5,5,"I am driving to Atlanta, and my friend is driving to Miami. What are the parking fees at those two hotels?",1.0,1.0,0.9024239352397198,0.9795658095217705,0.976397948952298,True
+hybrid_k5,6,Is breakfast free at the Miami Brickell property?,1.0,0.9932453310268177,0.8271435348068892,0.9970687769036652,0.9631537950988153,True
+hybrid_k5,7,Can I move my Advance Purchase reservation to next month?,0.9808067211241672,0.9511716604704163,0.7937098939663728,0.829945974248481,0.9058064411540334,True
+hybrid_k5,8,I need to leave at 2 PM from Denver. What happens if the hotel approves late checkout?,0.9959154283068422,0.9851952798209368,0.8340905961421221,0.829253581251324,0.9275380553413183,True
+hybrid_k5,9,My dog is not a service animal. What is the pet charge at ASH-CHI Loop?,1.0,0.9962107575679188,0.8991463990292754,1.0,0.9788819691978348,True
+hybrid_k5,10,The pending hold on my card is larger than the final bill. When will I get the difference back?,1.0,0.9989986428001186,0.7767224776773907,0.8953425617653448,0.9341626685885768,True
+hybrid_k6,1,I booked through an online travel agency. Who handles my cancellation and refund?,0.9955981354839972,0.9679178705669169,0.8335952756931281,0.9867035764955803,0.9544985854988699,True
+hybrid_k6,2,Does a member discount automatically mean I can cancel for free?,1.0,0.9999999999999998,0.8495589055037225,0.9782662476418222,0.9655650306291088,True
+hybrid_k6,3,How many people can stay in a Double Queen room?,1.0000000000000002,0.9930458258868835,0.7030965267081416,0.992840879609856,0.9374489377353205,False
+hybrid_k6,4,What exactly is included in an Accessible King room?,0.9626124170251797,0.9265349078227967,0.41611407286986346,0.786684242493188,0.8091077359871224,False
+hybrid_k6,5,"I am driving to Atlanta, and my friend is driving to Miami. What are the parking fees at those two hotels?",1.0,1.0,0.8929897729905563,0.9837619967386786,0.9753503539458469,True
+hybrid_k6,6,Is breakfast free at the Miami Brickell property?,1.0,0.9923039157952693,0.8447658247752537,0.9795658100063156,0.9629423059051312,True
+hybrid_k6,7,Can I move my Advance Purchase reservation to next month?,0.9752012584875448,0.9575563749222031,0.7799077504715964,0.8167349563872713,0.9000380755729651,True
+hybrid_k6,8,I need to leave at 2 PM from Denver. What happens if the hotel approves late checkout?,0.9980280870524444,0.9851952794450423,0.8310199378895767,0.8673328701340333,0.935279211934338,True
+hybrid_k6,9,My dog is not a service animal. What is the pet charge at ASH-CHI Loop?,1.0,0.9960951704617838,0.9066269264143033,0.9999999999999998,0.9803491778983066,True
+hybrid_k6,10,The pending hold on my card is larger than the final bill. When will I get the difference back?,1.0,1.0,0.7569851453881256,0.8950331176128286,0.9304036526001908,True

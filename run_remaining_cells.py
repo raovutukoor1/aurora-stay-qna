@@ -31,7 +31,7 @@ def annotate_chunk(chunk):
     lower = text.lower()
     topic_map = {
         "room_and_property": ("breakfast", "room", "parking", "pet", "accessible", "property", "occupancy"),
-        "booking_terms": ("cancellation", "advance purchase", "reservation", "no-show", "check-in"),
+        "booking_terms": ("cancellation", "advance purchase", "reservation", "no-show", "check-in", "late checkout", "late departure", "checkout", "departure"),
         "refunds": ("refund", "charge", "incidentals", "hold", "smoking", "parking"),
         "guest_conduct": ("service animal", "accessibility", "quiet hours", "conduct", "safety"),
     }
@@ -93,7 +93,7 @@ def annotate_chunk(chunk):
     lower = text.lower()
     topic_map = {
         "room_and_property": ("breakfast", "room", "parking", "pet", "accessible", "property", "occupancy"),
-        "booking_terms": ("cancellation", "advance purchase", "reservation", "no-show", "check-in"),
+        "booking_terms": ("cancellation", "advance purchase", "reservation", "no-show", "check-in", "late checkout", "late departure", "checkout", "departure"),
         "refunds": ("refund", "charge", "incidentals", "hold", "smoking", "parking"),
         "guest_conduct": ("service animal", "accessibility", "quiet hours", "conduct", "safety"),
     }
