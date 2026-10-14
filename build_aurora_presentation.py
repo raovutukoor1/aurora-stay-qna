@@ -363,7 +363,7 @@ def add_evaluation_table(slide):
         ["10", "Card-hold difference", ".999", ".998", ".781", ".895", ".934", "PASS"],
     ]
     table_shape = slide.shapes.add_table(
-        len(rows), len(rows[0]), Inches(0.48), Inches(1.32), Inches(9.04), Inches(3.72)
+        len(rows), len(rows[0]), Inches(0.48), Inches(1.32), Inches(9.04), Inches(3.50)
     )
     table = table_shape.table
     widths = [0.47, 3.00, 0.58, 0.58, 0.58, 0.58, 0.85, 0.82]
@@ -402,7 +402,7 @@ def add_evaluation_table(slide):
                         else (RED if value == "FAIL" else (GREEN if value == "PASS" else TEMPLATE_BLACK))
                     )
 
-    note = slide.shapes.add_textbox(Inches(0.55), Inches(5.12), Inches(8.9), Inches(0.28))
+    note = slide.shapes.add_textbox(Inches(0.55), Inches(4.90), Inches(8.9), Inches(0.24))
     note.text = "Selected baseline: 9/10 passed; weighted composite .941. The only failure is Accessible King Precision=.451."
     note.text_frame.word_wrap = True
     note.text_frame.margin_left = Inches(0.03)
@@ -412,9 +412,23 @@ def add_evaluation_table(slide):
         paragraph.space_after = Pt(0)
         for run in paragraph.runs:
             run.font.name = "Montserrat"
-            run.font.size = Pt(9.5)
+            run.font.size = Pt(8.8)
             run.font.bold = True
             run.font.color.rgb = TEMPLATE_BLUE
+
+    footnote = slide.shapes.add_textbox(Inches(0.55), Inches(5.17), Inches(8.9), Inches(0.24))
+    footnote.text = "F = Faithfulness | R = Contextual Recall | P = Contextual Precision | AR = Answer Relevancy"
+    footnote.text_frame.word_wrap = True
+    footnote.text_frame.margin_left = Inches(0.03)
+    footnote.text_frame.margin_right = Inches(0.03)
+    for paragraph in footnote.text_frame.paragraphs:
+        paragraph.space_before = Pt(0)
+        paragraph.space_after = Pt(0)
+        for run in paragraph.runs:
+            run.font.name = "Montserrat"
+            run.font.size = Pt(8.3)
+            run.font.italic = True
+            run.font.color.rgb = RGBColor(80, 80, 80)
 
 
 prs = Presentation(str(TEMPLATE))
