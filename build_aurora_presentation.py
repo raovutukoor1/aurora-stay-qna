@@ -608,7 +608,6 @@ slides = {
         "The application is runnable through the Flask backend and Streamlit frontend, locally or in GitHub Codespaces.",
         "Keep the benchmark question unchanged for evaluation; treat the remaining precision issue as a question/auto-answer limitation.",
         "Next operational step: add monitoring for insufficient context and review the single known failure before broader rollout.",
-        "Handoff owner: raovutukoor1/aurora-stay-qna.",
     ], 14),
 }
 
