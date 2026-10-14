@@ -258,7 +258,7 @@ def _add_template_row(slide, top, text, font_size, heading=False, color=None):
         paragraph.line_spacing = 1.0
         for run in paragraph.runs:
             run.font.name = "Montserrat"
-            run.font.size = Pt(font_size + (0.5 if heading else 0))
+            run.font.size = Pt(font_size)
             run.font.bold = heading
             run.font.color.rgb = color or (TEMPLATE_BLUE if heading else TEMPLATE_BLACK)
     if not heading:
@@ -303,15 +303,12 @@ def add_body(slide, lines, font_size=17, mono=False, body_top=1.45, add_header_l
         )
         content.append((text, is_bullet or is_indented, heading))
 
-    chars_per_line = 55
-    total_units = sum(max(1, (len(text) + chars_per_line - 1) // chars_per_line) for text, _, _ in content)
-    if total_units >= 15:
-        body_size = max(10.5, font_size - 2.0)
-    elif total_units >= 12:
-        body_size = max(11.5, font_size - 1.0)
-    else:
-        body_size = font_size
-    line_height = 0.22 if body_size <= 12 else 0.255
+    # Keep body typography consistent across the deck.  The text boxes use
+    # fit-to-shape for the few dense slides, while all body rows retain the
+    # same font, line spacing, and bullet treatment.
+    chars_per_line = 62
+    body_size = 13.5
+    line_height = 0.22
     if add_header_line:
         add_template_divider(slide)
     top = body_top
@@ -341,12 +338,7 @@ def add_body(slide, lines, font_size=17, mono=False, body_top=1.45, add_header_l
 
 def set_title(slide, title):
     title_shape = find_title_shape(slide)
-    title_size = 24
-    if len(title) > 55:
-        title_size = 20
-    elif len(title) > 43:
-        title_size = 22
-    set_shape_text(title_shape, title, font_name="Montserrat", font_size=title_size, bold=True, color=TEMPLATE_BLUE)
+    set_shape_text(title_shape, title, font_name="Montserrat", font_size=22, bold=True, color=TEMPLATE_BLUE)
 
 
 prs = Presentation(str(TEMPLATE))
@@ -382,7 +374,7 @@ agenda_text_shapes = sorted(
     [shape for shape in agenda_slide.shapes if hasattr(shape, "text_frame") and shape.text.strip()],
     key=lambda shape: shape.top,
 )
-set_shape_text(agenda_text_shapes[0], "Contents / Agenda", font_name="Montserrat", font_size=24, bold=True, color=TEMPLATE_BLUE)
+set_shape_text(agenda_text_shapes[0], "Contents / Agenda", font_name="Montserrat", font_size=22, bold=True, color=TEMPLATE_BLUE)
 agenda = [
     "Executive Summary",
     "Business Problem and Solution Approach",
