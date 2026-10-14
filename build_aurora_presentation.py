@@ -341,6 +341,82 @@ def set_title(slide, title):
     set_shape_text(title_shape, title, font_name="Montserrat", font_size=22, bold=True, color=TEMPLATE_BLUE)
 
 
+def add_evaluation_table(slide):
+    """Render the held-out baseline results as a compact rubric-friendly table."""
+    title_shape = find_title_shape(slide)
+    for shape in list(slide.shapes):
+        if shape._element is not title_shape._element:
+            remove_shape(shape)
+
+    add_template_divider(slide)
+    rows = [
+        ["Case", "Test case", "F", "R", "P", "AR", "Composite", "Result"],
+        ["01", "OTA cancellation/refund", ".991", ".946", ".826", ".977", ".944", "PASS"],
+        ["02", "Member discount/cancellation", "1.000", ".995", ".814", ".971", ".956", "PASS"],
+        ["03", "Double Queen occupancy", "1.000", ".994", ".958", ".990", ".988", "PASS"],
+        ["04", "Accessible King inclusions", ".989", ".913", ".451", ".801", ".825", "FAIL"],
+        ["05", "Atlanta/Miami parking", "1.000", "1.000", ".893", ".982", ".975", "PASS"],
+        ["06", "Miami breakfast", "1.000", ".994", ".828", ".994", ".963", "PASS"],
+        ["07", "Advance Purchase change", ".956", ".962", ".809", ".896", ".916", "PASS"],
+        ["08", "Denver late checkout", ".998", ".986", ".834", ".884", ".939", "PASS"],
+        ["09", "ASH-CHI pet fee", "1.000", ".986", ".888", "1.000", ".974", "PASS"],
+        ["10", "Card-hold difference", ".999", ".998", ".781", ".895", ".934", "PASS"],
+    ]
+    table_shape = slide.shapes.add_table(
+        len(rows), len(rows[0]), Inches(0.48), Inches(1.32), Inches(9.04), Inches(3.72)
+    )
+    table = table_shape.table
+    widths = [0.47, 3.00, 0.58, 0.58, 0.58, 0.58, 0.85, 0.82]
+    for idx, width in enumerate(widths):
+        table.columns[idx].width = Inches(width)
+
+    for r, row in enumerate(rows):
+        for c, value in enumerate(row):
+            cell = table.cell(r, c)
+            cell.text = value
+            cell.margin_left = Inches(0.035)
+            cell.margin_right = Inches(0.035)
+            cell.margin_top = Inches(0.01)
+            cell.margin_bottom = Inches(0.01)
+            cell.fill.solid()
+            if r == 0:
+                cell.fill.fore_color.rgb = TEMPLATE_BLUE
+            elif r == 4:
+                cell.fill.fore_color.rgb = RGBColor(255, 235, 235)
+            elif r % 2 == 0:
+                cell.fill.fore_color.rgb = RGBColor(242, 246, 255)
+            else:
+                cell.fill.fore_color.rgb = RGBColor(255, 255, 255)
+            for paragraph in cell.text_frame.paragraphs:
+                paragraph.alignment = PP_ALIGN.CENTER if c != 1 else PP_ALIGN.LEFT
+                paragraph.space_before = Pt(0)
+                paragraph.space_after = Pt(0)
+                paragraph.line_spacing = 1.0
+                for run in paragraph.runs:
+                    run.font.name = "Montserrat"
+                    run.font.size = Pt(8.4 if r else 8.2)
+                    run.font.bold = r == 0 or (c == 7 and value in {"PASS", "FAIL"})
+                    run.font.color.rgb = (
+                        RGBColor(255, 255, 255)
+                        if r == 0
+                        else (RED if value == "FAIL" else (GREEN if value == "PASS" else TEMPLATE_BLACK))
+                    )
+
+    note = slide.shapes.add_textbox(Inches(0.55), Inches(5.12), Inches(8.9), Inches(0.28))
+    note.text = "Selected baseline: 9/10 passed; weighted composite .941. The only failure is Accessible King Precision=.451."
+    note.text_frame.word_wrap = True
+    note.text_frame.margin_left = Inches(0.03)
+    note.text_frame.margin_right = Inches(0.03)
+    for paragraph in note.text_frame.paragraphs:
+        paragraph.space_before = Pt(0)
+        paragraph.space_after = Pt(0)
+        for run in paragraph.runs:
+            run.font.name = "Montserrat"
+            run.font.size = Pt(9.5)
+            run.font.bold = True
+            run.font.color.rgb = TEMPLATE_BLUE
+
+
 prs = Presentation(str(TEMPLATE))
 
 # Populate the complete template through the appendix. The final template
@@ -626,6 +702,10 @@ slides = {
 for slide_number, (title, lines, size, *mono) in slides.items():
     slide = prs.slides[slide_number - 1]
     add_header_band(slide)
+    if slide_number == 19:
+        add_evaluation_table(slide)
+        set_title(slide, title)
+        continue
     # The template's APPENDIX title is intentionally positioned low on the
     # slide; move it into the common title position before body cleanup so it
     # is preserved as the title shape without crowding the appendix content.
