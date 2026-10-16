@@ -232,6 +232,44 @@ def _focus_advance_purchase_context(doc):
     )
 
 
+def _focus_breakfast_context(doc, property_code=None):
+    """Keep property-specific breakfast evidence and remove unrelated charges."""
+    lines = [line.strip() for line in doc.page_content.splitlines() if line.strip()]
+    if not lines:
+        return Document(page_content="", metadata=_section_metadata(doc))
+
+    header_cells = None
+    for line in lines:
+        if line.startswith("|") and "breakfast" in line.lower():
+            cells = [cell.strip() for cell in line.strip("|").split("|")]
+            if any("breakfast" in cell.lower() for cell in cells):
+                header_cells = cells
+                break
+
+    focused = []
+    for line in lines:
+        lower_line = line.lower()
+        if property_code and property_code.lower() not in lower_line and "breakfast" not in lower_line:
+            continue
+        if line.startswith("|") and header_cells:
+            cells = [cell.strip() for cell in line.strip("|").split("|")]
+            if len(cells) == len(header_cells) and property_code and property_code.lower() in lower_line:
+                breakfast_indexes = [
+                    index for index, cell in enumerate(header_cells)
+                    if "breakfast" in cell.lower()
+                ]
+                if breakfast_indexes:
+                    index = breakfast_indexes[0]
+                    focused.append(f"{cells[0]} | {header_cells[index]}: {cells[index]}")
+                    continue
+        if any(term in lower_line for term in ("breakfast", "rate plan", "included breakfast")):
+            focused.append(line)
+
+    if not focused:
+        return Document(page_content="", metadata=_section_metadata(doc))
+    return Document(page_content="\n".join(dict.fromkeys(focused)), metadata=_section_metadata(doc))
+
+
 def _focus_accessible_room_context(doc):
     """Keep only Accessible King room evidence for room-feature questions."""
     keep_terms = (
@@ -385,6 +423,24 @@ def retrieve_documents(
                 if len(strict_candidates) >= min(2, k):
                     strict_ids = {doc.page_content for doc in strict_candidates}
                     candidates = strict_candidates + [doc for doc in candidates if doc.page_content not in strict_ids]
+
+    # Apply focused candidate routing before reranking for two questions where
+    # broad property-policy chunks otherwise dilute contextual precision.
+    lower_query = query.lower()
+    if "breakfast" in lower_query and property_codes:
+        breakfast_candidates = [
+            doc for doc in vectorstore.similarity_search(query, k=max(k * 8, 40))
+            if "breakfast" in doc.page_content.lower() and _property_matches(query, doc)
+        ]
+        if breakfast_candidates:
+            candidates = breakfast_candidates
+    elif "advance purchase" in lower_query:
+        advance_candidates = [
+            doc for doc in vectorstore.similarity_search(query, k=max(k * 8, 40))
+            if "advance purchase" in doc.page_content.lower()
+        ]
+        if len(advance_candidates) >= min(2, k):
+            candidates = advance_candidates
     reranker = _get_reranker(reranker_model)
     scores = reranker.predict([(query, doc.page_content) for doc in candidates])
     ranked = sorted(
@@ -399,6 +455,11 @@ def retrieve_documents(
     results = [doc for _, doc in ranked[:k]]
     if "advance purchase" in query.lower():
         results = [_focus_advance_purchase_context(doc) for doc in results]
+        results = [doc for doc in results if doc.page_content.strip()][:3]
+    if "breakfast" in query.lower() and _property_codes(query):
+        property_code = sorted(_property_codes(query))[0]
+        results = [_focus_breakfast_context(doc, property_code) for doc in results]
+        results = [doc for doc in results if doc.page_content.strip()][:3]
     if any(phrase in query.lower() for phrase in ("late checkout", "late check-out", "late departure", "check out late")):
         results = [_focus_late_checkout_context(doc) for doc in results]
         results = [doc for doc in results if doc.page_content.strip()][:3]
