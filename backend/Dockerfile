@@ -5,10 +5,14 @@ FROM python:3.13.15-slim
 WORKDIR /app
 COPY . .
 
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1
+
 RUN pip install --no-cache-dir --upgrade pip
 
 RUN pip install --no-cache-dir \
-    torch \
+    torch==2.14.0 \
     --index-url https://download.pytorch.org/whl/cpu
 
 RUN pip install --no-cache-dir -r requirements.txt
@@ -27,5 +31,7 @@ HuggingFaceEmbeddings( \
 # Force offline mode at runtime so it uses the cached model
 ENV TRANSFORMERS_OFFLINE=1
 ENV HF_HUB_OFFLINE=1
+
+EXPOSE 7860
 
 CMD ["gunicorn", "-w", "1", "--timeout", "120", "-b", "0.0.0.0:7860", "app:rag_api"]
