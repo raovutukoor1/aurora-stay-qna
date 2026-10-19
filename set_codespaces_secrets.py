@@ -23,7 +23,8 @@ session.headers.update({
 })
 
 owner = session.get("https://api.github.com/user").json()["login"]
-repo = "aurora-stay-qna-codespaces"
+# Active GitHub repository used for the Aurora Stays deployment.
+repo = "aurora-stay-qna"
 base = f"https://api.github.com/repos/{owner}/{repo}/codespaces/secrets"
 key_response = session.get(f"{base}/public-key")
 key_response.raise_for_status()
